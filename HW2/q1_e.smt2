@@ -17,7 +17,7 @@
 (ite (> x 1) (h x) (g x))
 )
 
-
+; f(x) = max(x^2, x^3)
 (define-fun f ((x Real)) Real
 (ite (> (g x) (h x)) (g x) (h x))
 )

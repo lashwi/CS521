@@ -3,7 +3,7 @@
 
 ; Define the function for which you are constructing a transformer
 
-
+; f(x) = x^3
 (define-fun f ((x Real)) Real
 (* x (* x x)))
 

@@ -16,6 +16,7 @@
 (- x (p x))
 )
 
+; f(x) = min(x-|x|, x+|x|)
 (define-fun f ((x Real)) Real
 (ite (> (g x) (h x)) (h x) (g x)) 
 )

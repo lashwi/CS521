@@ -3,6 +3,8 @@
 
 ; Define the function for which you are constructing a transformer
 
+
+; f(x) = x-|x|
 (define-fun h ((x Real)) Real
 (ite (> x 0) x (- x))
 )
