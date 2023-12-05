@@ -1,0 +1,59 @@
+(set-logic ALL)
+
+(define-fun g ((x Real)) Real
+(* x x)
+)
+
+
+(define-fun h ((x Real)) Real
+(* x (* x x))
+)
+
+; f(x) = max(x^2, x^3)
+(define-fun f ((x Real)) Real
+(ite (>= (g x) (h x)) (h x) (g x))
+)
+
+(synth-fun Tf_lower ((x Real) (y Real)) Real
+  ((Start Real) (StartBool Bool))
+  ((Start Real ((* x y) (ite StartBool (g x) (h x))  (ite StartBool Start Start) x y (g x) (h x)
+               (* Start Start)
+        ))
+   (StartBool Bool (
+                    (> 0 (* x y))
+                    (> (g x) (h x))
+                    ;; (> Start Start)
+                    ;; (< Start Start)
+                    ;; (< (f x) (f y))
+                
+                    ))))
+
+(synth-fun Tf_upper ((x Real) (y Real)) Real
+  ((Start Real) (StartBool Bool))
+  ((Start Real ( (ite StartBool (g y) (h y)) x y 
+               (ite StartBool Start Start)))
+   (StartBool Bool (
+                    (> (g y) (h y))
+                    ;; (> Start 0.0)
+                    ;; (< Start 0.0)
+                    ;; (> x 0)
+                    ;; (< y 0)
+                    ))))
+
+(declare-var x Real)
+(declare-var l Real)
+(declare-var u Real)
+
+(constraint 
+(=>
+(and (<= l x) (<= x u)) ; if input is within given bounds
+(and (<= (Tf_lower l u) (f x)) (<= (f x) (Tf_upper l u))) ; then output is within transformer bounds
+))
+;; (constraint(>= (Tf_lower l u ) 0.0))
+
+
+; This command asks the solver to check the satisfiability of your query
+; If you wrote a sound transformer, the solver should say 'unsat'
+(check-synth)
+; If the solver returns 'sat', uncommenting the line below will give you the values of the various variables that violate the soundness property. This will help you debug your solution.
+;(get-model)

@@ -1,0 +1,60 @@
+(set-logic ALL)
+; Define the function for which you are constructing a transformer
+; f(x) = x-|x|
+(define-fun f ((x Real)) Real
+(ite (> x 0) x (- x)) ; absolute value function
+)
+
+
+; Define the transformer as two functions
+; one for the lower bound of the range and one for the upper bound
+;; (define-fun Tf_lower ((l Real) (u Real)) Real
+;; (* l (* l l)))
+
+;; (define-fun Tf_upper ((l Real) (u Real)) Real
+;; (* u (* u u )))
+
+; To state the correctness of the transformer, ask the solver if there is
+; (1) a Real number x and (2) an interval [l,u]
+; that violate the soundness property, i.e., satisfy the negation of the soundness property.
+
+
+(synth-fun Tf_lower ((x Real) (y Real)) Real
+  ((Start Real) (StartBool Bool))
+  ((Start Real ( (ite StartBool Start Start) (ite StartBool (f x) (f y)) (f x) (f y)
+               (* x y)
+        ))
+   (StartBool Bool (
+                    (< (f x) (f y))
+                    (> 0 (* x y))
+                    ))))
+
+(synth-fun Tf_upper ((x Real) (y Real)) Real
+  ((Start Real) (StartBool Bool))
+  ((Start Real ((f x) (f y) x y
+               (ite StartBool Start Start)))
+   (StartBool Bool (
+                    (> Start 0.0)
+                    (< Start 0.0)
+                    (< (f x) (f y))
+                    (> x 0)
+                    (< y 0)
+                    ))))
+
+(declare-var x Real)
+(declare-var l Real)
+(declare-var u Real)
+
+(constraint 
+(=>
+(and (<= l x) (<= x u)) ; if input is within given bounds
+(and (<= (Tf_lower l u) (f x)) (<= (f x) (Tf_upper l u))) ; then output is within transformer bounds
+))
+;; (constraint(>= (Tf_lower l u ) 0.0))
+
+
+; This command asks the solver to check the satisfiability of your query
+; If you wrote a sound transformer, the solver should say 'unsat'
+(check-synth)
+; If the solver returns 'sat', uncommenting the line below will give you the values of the various variables that violate the soundness property. This will help you debug your solution.
+;(get-model)
