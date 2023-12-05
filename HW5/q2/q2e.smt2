@@ -46,11 +46,4 @@
 (and (<= l x) (<= x u) (= (f x) u_Tf))
 )))
 
-
-
-
-; This command asks the solver to check the satisfiability of your query
-; If you wrote a sound transformer, the solver should say 'unsat'
 (check-sat)
-; If the solver returns 'sat', uncommenting the line below will give you the values of the various variables that violate the soundness property. This will help you debug your solution.
-;(get-model)

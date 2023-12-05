@@ -1,8 +1,3 @@
-; Lines that start with a semicolon are comments
-
-
-; Define the function for which you are constructing a transformer
-
 
 (define-fun p ((x Real)) Real
 (ite (> x 0) x (- x))
@@ -49,8 +44,6 @@
 (exists ((x Real))
 (and (<= l x) (<= x u) (= (f x) u_Tf))
 )))
-
-
 
 
 ; This command asks the solver to check the satisfiability of your query

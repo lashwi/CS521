@@ -12,10 +12,6 @@
 (- x (ite (> x 0) x (- x)))
 )
 
-; Define the transformer as two functions
-; one for the lower bound of the range and one for the upper bound
-
-
 (define-fun Tf_lower ((x Real) (y Real)) Real (- x (h x)))
 (define-fun Tf_upper ((x Real) (y Real)) Real (- y (h y)))
 
